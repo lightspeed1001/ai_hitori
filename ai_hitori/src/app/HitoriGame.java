@@ -115,8 +115,45 @@ public class HitoriGame {
 
     private Boolean checkValidConnections()
     {
+    	Boolean check = true;
+    	 //Rows
+        for (int row = 0; row < size; row++) {
+        	for(int col = 0; col < size; col++)
+            {
+                if(!checkSide(row, col)) {
+                	return false;
+                }
+            }
+           
+        }
+        //Cols
+        
         //Check if all white spaces are connected to all other white spaces
         return true;
+    }
+    private Boolean checkSide(int row, int col) 
+    {
+    	if(row != 0 ) {
+    		if(!cells[row-1][col].black) {
+    			return true;
+    		}
+    	}
+    	if(row != size-1) {
+    		if(!cells[row+1][col].black) {
+    			return true;
+    		}
+    	}
+    	if(col != 0) {
+    		if(!cells[row][col-1].black) {
+    			return true;
+    		}
+    	}
+    	if(col != size-1) {
+    		if(!cells[row][col+1].black) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     public Boolean isValidSolution()
