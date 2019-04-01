@@ -139,7 +139,7 @@ public class HitoriGame {
         if(y != 0) reachables.addAll(getReachableCells(cells[x][y-1]));
         if(y != size - 1) reachables.addAll(getReachableCells(cells[x][y+1]));
 
-        reachables.addAll(getReachableCells(c));
+        // reachables.addAll(getReachableCells(c));
         return reachables;
     }
 
