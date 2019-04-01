@@ -1,6 +1,8 @@
 package app;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * HitoriGame
@@ -21,22 +23,22 @@ public class HitoriGame {
 
     public void markCellBlack(int row, int col, boolean black)
     {
-        cells[row][col].black = black;
+        cells[row][col].setBlack(black);
     }
 
     public void markCellMustBeWhite(int row, int col, boolean mustBeWhite)
     {
-        cells[row][col].mustBeWhite = mustBeWhite;
+        cells[row][col].setWhite(mustBeWhite);
     }
 
     public void print()
     {
         for (HitoriCell[] rows : cells) {
             for (HitoriCell cell : rows) {
-                if(cell.black)
+                if(cell.isBlack())
                     System.out.print("X ");
                 else
-                    System.out.print(cell.number + " ");
+                    System.out.print(cell.getNumber() + " ");
             }
             System.out.println("");
         }
@@ -48,12 +50,12 @@ public class HitoriGame {
         for (HitoriCell[] rows : cells) {
             Arrays.fill(numCounts, 0);
             for (HitoriCell cell : rows) {
-                if(!cell.black)
+                if(!cell.isBlack())
                 {    
-                    numCounts[cell.number - 1] += 1;
-                    if(numCounts[cell.number - 1] > 1) 
+                    numCounts[cell.getNumber() - 1] += 1;
+                    if(numCounts[cell.getNumber() - 1] > 1) 
                     {
-                        System.out.println("Too many " + cell.number + "s in row");
+                        System.out.println("Too many " + cell.getNumber() + "s in row");
                         return false;
                     }
                 }
@@ -71,12 +73,12 @@ public class HitoriGame {
             for(int row = 0; row < size; row++)
             {
                 HitoriCell cell = cells[row][col];
-                if(!cell.black)
+                if(!cell.isBlack())
                 {
-                    numCounts[cell.number - 1] += 1;
-                    if(numCounts[cell.number - 1] > 1) 
+                    numCounts[cell.getNumber() - 1] += 1;
+                    if(numCounts[cell.getNumber() - 1] > 1) 
                     {
-                        System.out.println("Too many " + cell.number + "s in col");
+                        System.out.println("Too many " + cell.getNumber() + "s in col");
                         return false;
                     }
                 }
@@ -92,8 +94,8 @@ public class HitoriGame {
         for (HitoriCell[] rows : cells) {
             wasPrevBlack = false;
             for (HitoriCell cell : rows) {
-                if(cell.black && wasPrevBlack) return false;
-                else if (cell.black) wasPrevBlack = true;
+                if(cell.isBlack() && wasPrevBlack) return false;
+                else if (cell.isBlack()) wasPrevBlack = true;
                 else wasPrevBlack = false;
             }
         }
@@ -104,8 +106,8 @@ public class HitoriGame {
             for(int row = 0; row < size; row++)
             {
                 HitoriCell cell = cells[row][col];
-                if(cell.black && wasPrevBlack) return false;
-                else if (cell.black) wasPrevBlack = true;
+                if(cell.isBlack() && wasPrevBlack) return false;
+                else if (cell.isBlack()) wasPrevBlack = true;
                 else wasPrevBlack = false;
             }
         }
@@ -113,43 +115,86 @@ public class HitoriGame {
         return true;
     }
 
+    private Set<HitoriCell> getNonBlackSquares()
+    {
+        Set<HitoriCell> retSet = new HashSet<HitoriCell>();
+        for (HitoriCell[] rows : cells) {
+            for (HitoriCell cell : rows) {
+                if(!cell.isBlack()) retSet.add(cell);
+            }
+        }
+        return retSet;
+    }
+
+    private Set<HitoriCell> getReachableCells(HitoriCell c)
+    {
+        Set<HitoriCell> reachables = new HashSet<HitoriCell>();
+        if(c.beenVisited() || c.isBlack()) return reachables;
+        c.setVisited(true);
+        reachables.add(c);
+        
+        int x = c.getX(), y = c.getY();
+        if(x != 0) reachables.addAll(getReachableCells(cells[x-1][y]));
+        if(x != size - 1) reachables.addAll(getReachableCells(cells[x+1][y]));
+        if(y != 0) reachables.addAll(getReachableCells(cells[x][y-1]));
+        if(y != size - 1) reachables.addAll(getReachableCells(cells[x][y+1]));
+
+        reachables.addAll(getReachableCells(c));
+        return reachables;
+    }
+
+    private void resetVisitedCells()
+    {
+        for (HitoriCell[] rows : cells) {
+            for (HitoriCell cell : rows) {
+                cell.setVisited(false);
+            }
+        }
+    }
+
     private Boolean checkValidConnections()
     {
-    	Boolean check = true;
-    	 //Rows
-        for (int row = 0; row < size; row++) {
-        	for(int col = 0; col < size; col++)
-            {
-                if(!checkSide(row, col)) {
-                	return false;
-                }
-            }
-           
-        }
-        //Cols
+        Set<HitoriCell> nonBlacks = getNonBlackSquares();
+        Set<HitoriCell> reachables = getReachableCells(nonBlacks.iterator().next());
+        resetVisitedCells();
+        return nonBlacks.equals(reachables);
+        // Boolean check = true;
         
-        //Check if all white spaces are connected to all other white spaces
-        return true;
+
+    	// //Rows
+        // for (int row = 0; row < size; row++) {
+        // 	for(int col = 0; col < size; col++)
+        //     {
+        //         if(!checkSide(row, col)) {
+        //         	return false;
+        //         }
+        //     }
+           
+        // }
+        // //Cols
+        
+        // //Check if all white spaces are connected to all other white spaces
+        // return true;
     }
     private Boolean checkSide(int row, int col) 
     {
     	if(row != 0 ) {
-    		if(!cells[row-1][col].black) {
+    		if(!cells[row-1][col].isBlack()) {
     			return true;
     		}
     	}
     	if(row != size-1) {
-    		if(!cells[row+1][col].black) {
+    		if(!cells[row+1][col].isBlack()) {
     			return true;
     		}
     	}
     	if(col != 0) {
-    		if(!cells[row][col-1].black) {
+    		if(!cells[row][col-1].isBlack()) {
     			return true;
     		}
     	}
     	if(col != size-1) {
-    		if(!cells[row][col+1].black) {
+    		if(!cells[row][col+1].isBlack()) {
     			return true;
     		}
     	}
@@ -160,11 +205,21 @@ public class HitoriGame {
     {
         if(checkRows() && checkCols())
         {
-            if(!checkBlackSquares()) return false;
-            if(!checkValidConnections()) return false;
+            System.out.println("Rows and cols ok");
+            if(!checkBlackSquares()) 
+            {
+                System.out.println(("Adjacent black squares"));
+                return false;
+            }
+            if(!checkValidConnections()) 
+            {
+                System.out.println("Unreachable white squares");
+                return false;
+            }
         }
         else
         {
+            System.out.println("Duplicate numbers");
             return false;
         }
         return true;
