@@ -18,6 +18,22 @@ public class App {
             System.out.println("================================");
         }
 
+        Set<HitoriCell[][]> tests = HitoriTests.getTestCase(99);
+        System.out.println("Testing getPossibleBlackSquares ");
+        for (HitoriCell[][] test : tests) {
+            System.out.println("------");
+            HitoriGame g = new HitoriGame(test.length, test);
+            System.out.println("Solved? " + g.isValidSolution());
+            g.print();
+            Set<HitoriCell> possibleBlacks = g.getPossibleBlackCells();
+            
+            System.out.println("===Possible black cells===");
+            for (HitoriCell cell : possibleBlacks) {
+                System.out.println("value: " + cell.getNumber() + "; (" + cell.getX() + ", " + cell.getY() + ");");
+            }
+        }
+        System.out.println("================================");
+
         //TODO Test the solver on some unsolved puzzles
         /*
         Have some sort of main menu?

@@ -152,8 +152,17 @@ public class HitoriTests
                 testCases.add(adjacentBlacks3);
                 testCases.add(unreachables3);
                 break;
+            case 99: //Testing the possible black squares function
+                HitoriCell[][] test = new HitoriCell[][] {
+                    {new HitoriCell(0,0,1),   new HitoriCell(0,1,4), new HitoriCell(0,2,2, true), new HitoriCell(0,3,4), new HitoriCell(0,4,3)},
+                    {new HitoriCell(1,0,1, true),   new HitoriCell(1,1,1), new HitoriCell(1,2,3), new HitoriCell(1,3,4), new HitoriCell(1,4,5)},
+                    {new HitoriCell(2,0,3),   new HitoriCell(2,1,4, true), new HitoriCell(2,2,4), new HitoriCell(2,3,5), new HitoriCell(2,4,5)},
+                    {new HitoriCell(3,0,4),   new HitoriCell(3,1,5), new HitoriCell(3,2,1), new HitoriCell(3,3,3), new HitoriCell(3,4,2)},
+                    {new HitoriCell(4,0,1),   new HitoriCell(4,1,3), new HitoriCell(4,2,3), new HitoriCell(4,3,1), new HitoriCell(4,4,2)}};
+                testCases.add(test);
+                break;
             default:
-                //Same as test case 1
+                //Same as test case 0
                 HitoriCell[][] originalDefault = getUnsolvedPuzzle(0);
                 HitoriCell[][] solutionDefault = new HitoriCell[][] {
                     {new HitoriCell(0,0,1),         new HitoriCell(0,1,4),       new HitoriCell(0,2,2),       new HitoriCell(0,3,4, true),  new HitoriCell(0,4,3)},
