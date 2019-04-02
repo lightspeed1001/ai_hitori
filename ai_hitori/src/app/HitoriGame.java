@@ -21,6 +21,19 @@ public class HitoriGame {
         this.cells = cells;
     }
 
+    public HitoriGame(HitoriGame other)
+    {
+        this.size = other.size;
+        this.cells = new HitoriCell[size][size];
+        for(int row = 0; row < size; row++)
+        {
+            for(int col = 0; col < size; col++)
+            {
+                this.cells[row][col] = other.cells[row][col];
+            }
+        }
+    }
+
     public void markCellBlack(int row, int col, boolean black)
     {
         cells[row][col].setBlack(black);
@@ -55,7 +68,7 @@ public class HitoriGame {
                     numCounts[cell.getNumber() - 1] += 1;
                     if(numCounts[cell.getNumber() - 1] > 1) 
                     {
-                        System.out.println("Too many " + cell.getNumber() + "s in row");
+                        // System.out.println("Too many " + cell.getNumber() + "s in row");
                         return false;
                     }
                 }
@@ -78,7 +91,7 @@ public class HitoriGame {
                     numCounts[cell.getNumber() - 1] += 1;
                     if(numCounts[cell.getNumber() - 1] > 1) 
                     {
-                        System.out.println("Too many " + cell.getNumber() + "s in col");
+                        // System.out.println("Too many " + cell.getNumber() + "s in col");
                         return false;
                     }
                 }
@@ -158,51 +171,11 @@ public class HitoriGame {
         Set<HitoriCell> reachables = getReachableCells(nonBlacks.iterator().next());
         resetVisitedCells();
         return nonBlacks.equals(reachables);
-        // Boolean check = true;
-        
-
-    	// //Rows
-        // for (int row = 0; row < size; row++) {
-        // 	for(int col = 0; col < size; col++)
-        //     {
-        //         if(!checkSide(row, col)) {
-        //         	return false;
-        //         }
-        //     }
-           
-        // }
-        // //Cols
-        
-        // //Check if all white spaces are connected to all other white spaces
-        // return true;
-    }
-    private Boolean checkSide(int row, int col) 
-    {
-    	if(row != 0 ) {
-    		if(!cells[row-1][col].isBlack()) {
-    			return true;
-    		}
-    	}
-    	if(row != size-1) {
-    		if(!cells[row+1][col].isBlack()) {
-    			return true;
-    		}
-    	}
-    	if(col != 0) {
-    		if(!cells[row][col-1].isBlack()) {
-    			return true;
-    		}
-    	}
-    	if(col != size-1) {
-    		if(!cells[row][col+1].isBlack()) {
-    			return true;
-    		}
-    	}
-    	return false;
     }
 
     public Boolean isValidSolution()
     {
+        //This can be consolidated into one line, but we have it like this for debugging purposes
         if(checkRows() && checkCols())
         {
             System.out.println("Rows and cols ok");
