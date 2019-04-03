@@ -231,6 +231,19 @@ public class HitoriGame {
         }
         return derp;
     }
+    public Boolean isValidMaker() {
+    	 if(!checkBlackSquares()) 
+         {
+             // System.out.println(("Adjacent black squares"));
+             return false;
+         }
+         if(!checkValidConnections()) 
+         {
+             // System.out.println("Unreachable white squares");
+             return false;
+         }
+         return true;
+    }
 
     public Boolean isValidSolution()
     {
