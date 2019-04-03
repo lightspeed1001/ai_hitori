@@ -1,8 +1,14 @@
 package app;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
 
 /**
  * HitoriGame
@@ -14,13 +20,34 @@ public class HitoriGame {
        No gameplay logic! That goes into HitoriPlayer */
     private HitoriCell[][] cells;
     private int size;
+    private HitoriGame parent;
+    private Map<Point, HitoriGame> successorStates;
 
     public HitoriGame(int size, HitoriCell[][] cells)
     {
         this.size = size;
         this.cells = cells;
+        this.parent = null;
+        successorStates = new HashMap<Point,HitoriGame>();
+    }
+    public HitoriGame(HitoriGame other)
+    {
+        this.cells = other.getBoard();
+        this.parent = other;
+        successorStates = new HashMap<Point,HitoriGame>();
+    }
+    public void AddSuccessorState(Point point, HitoriGame successor)
+    {
+        successorStates.put(point, successor);
+    }
+    public Map<Point, HitoriGame> GetSuccessorStates()
+    {
+        return successorStates;
     }
 
+    public HitoriCell[][] getBoard() {
+    	return cells;
+    }
     public void markCellBlack(int row, int col, boolean black)
     {
         cells[row][col].setBlack(black);
@@ -29,6 +56,22 @@ public class HitoriGame {
     public void markCellMustBeWhite(int row, int col, boolean mustBeWhite)
     {
         cells[row][col].setWhite(mustBeWhite);
+    }
+    public List<Point> couldBeBlack() {
+    	List<Point> blacks = new ArrayList<Point>();
+    	
+    	for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size-1; col++)
+            {
+            	if(!cells[row][col].mustBeWhite()) {
+            		Point point = new Point(row, col);
+            		blacks.add(point);
+            	}
+            	
+            }
+    	}
+    	
+    	return blacks;
     }
 
     public void print()
@@ -158,47 +201,8 @@ public class HitoriGame {
         Set<HitoriCell> reachables = getReachableCells(nonBlacks.iterator().next());
         resetVisitedCells();
         return nonBlacks.equals(reachables);
-        // Boolean check = true;
-        
-
-    	// //Rows
-        // for (int row = 0; row < size; row++) {
-        // 	for(int col = 0; col < size; col++)
-        //     {
-        //         if(!checkSide(row, col)) {
-        //         	return false;
-        //         }
-        //     }
-           
-        // }
-        // //Cols
-        
-        // //Check if all white spaces are connected to all other white spaces
+        //Check if all white spaces are connected to all other white spaces
         // return true;
-    }
-    private Boolean checkSide(int row, int col) 
-    {
-    	if(row != 0 ) {
-    		if(!cells[row-1][col].isBlack()) {
-    			return true;
-    		}
-    	}
-    	if(row != size-1) {
-    		if(!cells[row+1][col].isBlack()) {
-    			return true;
-    		}
-    	}
-    	if(col != 0) {
-    		if(!cells[row][col-1].isBlack()) {
-    			return true;
-    		}
-    	}
-    	if(col != size-1) {
-    		if(!cells[row][col+1].isBlack()) {
-    			return true;
-    		}
-    	}
-    	return false;
     }
 
     public Boolean isValidSolution()
