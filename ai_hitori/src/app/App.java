@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class App {
     public static void main(String[] args) throws Exception {
-
+        //Testing the state class
         for (int i = 0; i < HitoriTests.NUMBER_OF_TESTS; i++) 
         {
             Set<HitoriCell[][]> tests = HitoriTests.getTestCase(i);
@@ -17,34 +17,31 @@ public class App {
             }
             System.out.println("================================");
         }
-        
-        Set<HitoriCell[][]> tests = HitoriTests.getTestCase(99);
-        System.out.println("Testing getPossibleBlackSquares ");
+        //Testing the solver
+        System.out.println("Testing solver");
+        Set<HitoriCell[][]> tests = HitoriTests.getSmallUnsolvedPuzzles();
         for (HitoriCell[][] test : tests) {
             System.out.println("------");
+            System.out.println("---Original---");
             HitoriGame g = new HitoriGame(test.length, test);
             System.out.println("Solved? " + g.isValidSolution());
             g.print();
-            Set<HitoriCell> possibleBlacks = g.getPossibleBlackCells();
-            
-            System.out.println("===Possible black cells===");
-            for (HitoriCell cell : possibleBlacks) {
-                System.out.println("value: " + cell.getNumber() + "; (" + cell.getX() + ", " + cell.getY() + ");");
-            }
+            long start = System.currentTimeMillis();
+            HitoriSolver solve = new HitoriSolver(g);
+            System.out.println("---BFS Solve---");
+            HitoriGame solution = solve.BFSSolve();
+            if(solution != null) solution.print();
+            long end = System.currentTimeMillis();
+            System.out.println("Time to find solution: " + (end - start) + "ms");
+            System.out.println("---DFS Solve---");
+            start = System.currentTimeMillis();
+            solution = solve.DFSSolve();
+            if(solution != null) solution.print();
+            end = System.currentTimeMillis();
+            System.out.println("Time to find solution: " + (end - start) + "ms");
         }
         System.out.println("================================");
-
-        HitoriCell[][] test = HitoriTests.getUnsolvedPuzzle(0);
-        HitoriGame g = new HitoriGame(test.length, test);
-        g.print();
-        HitoriSolver s = new HitoriSolver(g);
-        System.out.println("BFS Solution");
-        s.BFSSolve().print();
-        System.out.println("DFS Solution");
-        s.DFSSolve().print();
-        System.out.println("Human solution");
-        HitoriGame gg = new HitoriGame(5, HitoriTests.getSolvedPuzzle(0));
-        gg.print();
+        
         /*
         Have some sort of main menu?
 
