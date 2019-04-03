@@ -82,6 +82,18 @@ public class HitoriGame {
             System.out.println("");
         }
     }
+    public void printBlack()
+    {
+        for (HitoriCell[] rows : cells) {
+            for (HitoriCell cell : rows) {
+                if(!cell.isBlack())
+                    System.out.print(" X ");
+                else
+                    System.out.print(" " + cell.getNumber() + " ");
+            }
+            System.out.println("");
+        }
+    }
 
     //Check each row for duplicate numbers
     private Boolean checkRows()
@@ -246,6 +258,25 @@ public class HitoriGame {
             }
         }
         return derp;
+    }
+    public Boolean isValidBlackNum(Set<HitoriCell> black) {
+    	Boolean validX = false;
+    	Boolean validY = false;
+    	for(HitoriCell b : black){
+    		int lineNum = b.getNumber();
+    		for (HitoriCell[] rows : cells) {
+    			if(rows[b.getY()].getNumber() == lineNum){
+    				validX = true;
+    			}
+    		}
+    		for(int col = 0; col < size; col++) {
+    			if(cells[b.getX()][col].getNumber() == lineNum) {
+    				validY = true;
+    			}
+    		}
+    		
+    	}
+    	return(validX && validY);
     }
     public Boolean isValidMaker() {
     	 if(!checkBlackSquares()) 

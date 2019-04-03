@@ -105,8 +105,8 @@ public class HitoriMaker {
 	       //do this until white isn't connected anymore
 	    }while(loops < 10000);
 	    
-	    System.out.println(blackSquares.size());
-	    board.print();
+//	    System.out.println(blackSquares.size());
+//	    board.print();
     }
     //remove cells that must be white from the cell lists to make the random select more accurate
     private ArrayList<HitoriCell> removeWhites(ArrayList<HitoriCell> set, HitoriCell cell) {
@@ -130,15 +130,57 @@ public class HitoriMaker {
     private void generateNumbers() 
     {
     	HitoriGame temp = new HitoriGame(board);
-    	do {
-    		for(HitoriCell square: blackSquares) {
-    		
-    		}
-    	}while(correctBlackNum(temp));
+    	//do {
+    	
+    		//addBlackNum();
+    		addNums();
+    		//correctBlackNum(temp);
+    	//}while(correctBlackNum(temp));
     	
     	//index = random.nextInt(allCell.size());
     	///generate numbers
     }
+    private void addNums() {
+    	HitoriGame temp = new HitoriGame(board);
+    	HitoriCell[][] b = temp.getBoard();
+    	ArrayList<Integer> num = new ArrayList<Integer>();
+    	for(int i = 1; i <= size; i++) {
+    		num.add(i);
+    	}
+    	
+    	Collections.shuffle(num);
+    	int index;
+    	do {
+    		for(HitoriCell s : blackSquares) {
+    			index = random.nextInt(num.size());
+    			b[s.getX()][s.getY()].setNumber(num.get(index));
+    		}
+    	}while(temp.isValidBlackNum(blackSquares));
+    
+    
+    }
+    private void addBlackNum() {
+    	HitoriGame temp = new HitoriGame(board);
+    	HitoriCell[][] b = temp.getBoard();
+    	ArrayList<Integer> num = new ArrayList<Integer>();
+    	for(int i = 1; i <= size; i++) {
+    		num.add(i);
+    	}
+    	
+    	Collections.shuffle(num);
+    	int index;
+    	do {
+    		for(HitoriCell s : blackSquares) {
+    			index = random.nextInt(num.size());
+    			b[s.getX()][s.getY()].setNumber(num.get(index));
+    		}
+    	}while(temp.isValidBlackNum(blackSquares));
+    	temp.print();
+    	System.out.println("====================");
+    	temp.printBlack();
+    	board = temp;
+    }
+    
     private Boolean correctBlackNum(HitoriGame temp) {
     	HitoriCell[][] b = temp.getBoard();
     	ArrayList<Integer> num = new ArrayList<Integer>();
@@ -147,16 +189,29 @@ public class HitoriMaker {
     	}
     	
     	Collections.shuffle(num);
-    	int index = random.nextInt(num.size());
-    	int prevBlackNum = num.get(index);
+    	int index;
+    	int prevBlackNum = size+1;
     	for(int row = 0; row < size; row++) {
-    		
        		for(int col = 0; col < size; col++) {
        			if(b[row][col].isBlack() && b[row][col].getNumber() == size+1) {
+       				if(prevBlackNum == size+1) {
+	       				index = random.nextInt(num.size());
+	       		    	prevBlackNum = num.get(index);
+       				}
+       				
        				b[row][col].setNumber(prevBlackNum);
+       				return true;
        			}
+       			else if(b[row][col].isBlack() && b[row][col].getNumber() != size+1) {
+       				prevBlackNum = b[row][col].getNumber();
+       			}
+       			System.out.println(prevBlackNum);
        		}
        	}
+    	temp.print();
+    	System.out.println("====================");
+    	temp.printBlack();
+    	board = temp;
     	return true;
     }
 }
