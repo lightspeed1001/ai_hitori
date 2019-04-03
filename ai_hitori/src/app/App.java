@@ -33,7 +33,18 @@ public class App {
             }
         }
         System.out.println("================================");
-        //TODO Test the solver on some unsolved puzzles
+
+        HitoriCell[][] test = HitoriTests.getUnsolvedPuzzle(0);
+        HitoriGame g = new HitoriGame(test.length, test);
+        g.print();
+        HitoriSolver s = new HitoriSolver(g);
+        System.out.println("BFS Solution");
+        s.BFSSolve().print();
+        System.out.println("DFS Solution");
+        s.DFSSolve().print();
+        System.out.println("Human solution");
+        HitoriGame gg = new HitoriGame(5, HitoriTests.getSolvedPuzzle(0));
+        gg.print();
         /*
         Have some sort of main menu?
 

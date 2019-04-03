@@ -1,10 +1,8 @@
 package app;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,27 +17,24 @@ public class HitoriGame {
        No gameplay logic! That goes into HitoriPlayer */
     private HitoriCell[][] cells;
     private int size;
-    private HitoriGame parent;
     private Map<HitoriCell, HitoriGame> successorStates;
 
     public HitoriGame(int size, HitoriCell[][] cells)
     {
         this.size = size;
         this.cells = cells;
-        this.parent = null;
         successorStates = new HashMap<HitoriCell,HitoriGame>();
     }
     public HitoriGame(HitoriGame other)
     {
     	this.size = other.size;
-        this.cells = other.getBoard();
-        this.parent = other;
+        this.cells = new HitoriCell[other.size][other.size];
         successorStates = new HashMap<HitoriCell,HitoriGame>();
         for(int row = 0; row < size; row++)
         {
             for(int col = 0; col < size; col++)
             {
-                this.cells[row][col] = other.cells[row][col];
+                this.cells[row][col] = new HitoriCell(other.cells[row][col]);
             }
         }
     }
@@ -69,10 +64,13 @@ public class HitoriGame {
     {
         for (HitoriCell[] rows : cells) {
             for (HitoriCell cell : rows) {
-                if(cell.isBlack())
-                    System.out.print("X ");
+                if(cell.isBlack() && cell.mustBeWhite()) System.out.print("!" + cell.getNumber()+"!");
+                else if(cell.isBlack())
+                    System.out.print(" X ");
+                // else if(cell.mustBeWhite())
+                //     System.out.print("(" + cell.getNumber()+")");
                 else
-                    System.out.print(cell.getNumber() + " ");
+                    System.out.print(" " + cell.getNumber() + " ");
             }
             System.out.println("");
         }
@@ -89,7 +87,7 @@ public class HitoriGame {
                     numCounts[cell.getNumber() - 1] += 1;
                     if(numCounts[cell.getNumber() - 1] > 1) 
                     {
-                        System.out.println("Too many " + cell.getNumber() + "s in row");
+                        // System.out.println("Too many " + cell.getNumber() + "s in row");
                         return false;
                     }
                 }
@@ -112,7 +110,7 @@ public class HitoriGame {
                     numCounts[cell.getNumber() - 1] += 1;
                     if(numCounts[cell.getNumber() - 1] > 1) 
                     {
-                        System.out.println("Too many " + cell.getNumber() + "s in col");
+                        // System.out.println("Too many " + cell.getNumber() + "s in col");
                         return false;
                     }
                 }
@@ -217,26 +215,43 @@ public class HitoriGame {
         return nonBlacks.equals(reachables);
     }
 
+    public String str()
+    {
+        String derp = "";
+        for (HitoriCell[] rows : cells) {
+            for (HitoriCell cell : rows) {
+                if(cell.isBlack() && cell.mustBeWhite()) derp += ("!" + cell.getNumber());
+                else if(cell.isBlack())
+                    derp += ("X");
+                else if(cell.mustBeWhite())
+                    derp += ("(" + cell.getNumber());
+                else
+                    derp +=(cell.getNumber());
+            }
+        }
+        return derp;
+    }
+
     public Boolean isValidSolution()
     {
         //This can be consolidated into one line, but we have it like this for debugging purposes
         if(checkRows() && checkCols())
         {
-            System.out.println("Rows and cols ok");
+            // System.out.println("Rows and cols ok");
             if(!checkBlackSquares()) 
             {
-                System.out.println(("Adjacent black squares"));
+                // System.out.println(("Adjacent black squares"));
                 return false;
             }
             if(!checkValidConnections()) 
             {
-                System.out.println("Unreachable white squares");
+                // System.out.println("Unreachable white squares");
                 return false;
             }
         }
         else
         {
-            System.out.println("Duplicate numbers");
+            // System.out.println("Duplicate numbers");
             return false;
         }
         return true;

@@ -1,10 +1,8 @@
 package app;
 
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -17,7 +15,6 @@ public class HitoriSolver {
 	private HitoriGame original;
 	private HitoriCell[][] cells;
     private int size;
-    private List<Point> blackedCells;
     //private HitoriGame board;
 	
 	HitoriSolver(HitoriGame board){
@@ -26,9 +23,9 @@ public class HitoriSolver {
 		size = cells.length;
 		//board = new HitoriGame(this.board);
 		
-		checkCorners(board);
-		solveThreeInRow(board);
-		original = DFSSolve();
+		// checkCorners(board);
+		// solveThreeInRow(board);
+		// original = BFSSolve();
 		
 	}
 	//must first check corners for three of same
@@ -137,8 +134,9 @@ public class HitoriSolver {
 		
 	public HitoriCell[][] getBoard() {
 		return cells;
-	}
-    public void UpdateMap(HitoriGame state, HitoriCell point) {
+    }
+    
+    private void UpdateMap(HitoriGame state, HitoriCell point) {
     	int row = point.getX();
     	int col = point.getY();
     	state.markCellBlack(row, col, true);
@@ -156,9 +154,8 @@ public class HitoriSolver {
 		}
     	
     }
-  //Add it as a successor to the state we were given
     
-    public boolean FillSuccessors(HitoriGame node)
+    private boolean FillSuccessors(HitoriGame node)
     {
         Set<HitoriCell> legalMoves = node.getPossibleBlackCells();
         for (HitoriCell cell : legalMoves) 
@@ -173,55 +170,110 @@ public class HitoriSolver {
         return false;
     }
     
+    public HitoriGame BFSSolve()
+    {
+        //Statistics
+        int maxFrontier = 0, expandedStates = 0;
+
+        
+        //For BFS, our frontier is a queue
+        Queue<HitoriGame> frontier = new LinkedList<HitoriGame>();
+        //Keep track of states, so we don't run into infinite loops
+        Set<String> seenStates = new HashSet<String>();
+        
+        //Don't want to mess with the original. That's just rude.
+        HitoriGame node = new HitoriGame(original);
+        //Check corners and three in a row first, since those are rather simple.
+        checkCorners(node);
+        solveThreeInRow(node);
+        frontier.add(node);
+        while(frontier.size() != 0)
+        {
+            //If the frontier is empty, we have failed to find a solution
+            if (frontier.isEmpty()) break;
+            //Grab the next node
+            node = frontier.remove();
+            FillSuccessors(node);
+            
+            //if making the point black causes something illegal go back one state
+            
+            if (node.isValidSolution())
+            {
+                System.out.println("Max frontier: " + maxFrontier);
+                System.out.println("Expanded states: " + expandedStates);
+                return node;
+            }
+            //Check for repeated states so that the frontier doesn't grow insanely big
+            String stateString = node.str();
+            if(!seenStates.contains(stateString))
+            {
+                seenStates.add(stateString);
+                frontier.addAll(node.GetSuccessorStates().values());
+            }
+            //Statistics
+            expandedStates++;
+            if(frontier.size() > maxFrontier) 
+            {
+                maxFrontier = frontier.size();
+            }
+        }
+        System.out.println("No solution found. :(");
+        System.out.println("Max frontier: " + maxFrontier);
+        System.out.println("Expanded states: " + expandedStates);
+        return null;
+    }
+
 	public HitoriGame DFSSolve()
 	{
-        if (blackedCells  == null)
-        {
-
-            int maxFrontier = 0;
-
-            //The blackedCells the agent is supposed to execute
-            blackedCells = new ArrayList<Point>();
-            //For DFS, our frontier is a stack
-            Stack<HitoriGame> frontier = new Stack<HitoriGame>();
-            //Keep track of states, so we don't run into infinite loops
-            Set<HitoriGame> seenStates = new HashSet<HitoriGame>();
-            boolean solved = false;//, foundDirt = false, goHome = false;
-            //String stateString;
-            
-            //Don't want to mess with the original. That's just rude.
-            HitoriGame node = new HitoriGame(size, cells);
-            frontier.add(node);
-            while(!solved)
-            {
-                //If the frontier is empty, we have failed to find a solution
-                if (frontier.isEmpty()) break;
-                //Grab the next node
-                node = frontier.pop();
-                FillSuccessors(node);
-                
-                //if making the point black causes something illegal go back one state
-                
-                if (node.isValidSolution())
-                {
-                    solved = true;
-                    return node;
-                }
-                //Check for repeated states so that the frontier doesn't grow insanely big
-                HitoriGame stateString = node;
-                if(!seenStates.contains(stateString))
-                {
-                    seenStates.add(stateString);
-                    frontier.addAll(node.GetSuccessorStates().values());
-                }
-                //Statistics
-                if(frontier.size() > maxFrontier) maxFrontier = frontier.size();
-            }
-            return node;
-        }
-        return original;
+        int maxFrontier = 0, expandedStates = 0;
         
+        //For DFS, our frontier is a stack
+        Stack<HitoriGame> frontier = new Stack<HitoriGame>();
+        //Keep track of states, so we don't run into infinite loops
+        Set<String> seenStates = new HashSet<String>();
+        
+        //Don't want to mess with the original. That's just rude.
+        HitoriGame node = new HitoriGame(original);
+        //Check corners and three in a row first, since those are rather simple.
+        checkCorners(node);
+        solveThreeInRow(node);
+        frontier.add(node);
+        while(frontier.size() != 0)
+        {
+            //If the frontier is empty, we have failed to find a solution
+            if (frontier.isEmpty()) break;
+            //Grab the next node
+            node = frontier.pop();
+            FillSuccessors(node);
+            
+            //if making the point black causes something illegal go back one state
+            
+            if (node.isValidSolution())
+            {
+                System.out.println("Max frontier: " + maxFrontier);
+                System.out.println("Expanded states: " + expandedStates);
+                return node;
+            }
+            //Check for repeated states so that the frontier doesn't grow insanely big
+            String stateString = node.str();
+            if(!seenStates.contains(stateString))
+            {
+                seenStates.add(stateString);
+                frontier.addAll(node.GetSuccessorStates().values());
+            }
+            //Statistics
+            expandedStates++;
+            if(frontier.size() > maxFrontier) 
+            {
+                maxFrontier = frontier.size();
+            }
+        }
+        System.out.println("No solution found. :(");
+        System.out.println("Max frontier: " + maxFrontier);
+        System.out.println("Expanded states: " + expandedStates);
+        return null;
     }
+
 	public HitoriGame ret()
 	{
 		return original;
