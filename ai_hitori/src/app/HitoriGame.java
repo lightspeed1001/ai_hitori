@@ -32,9 +32,17 @@ public class HitoriGame {
     }
     public HitoriGame(HitoriGame other)
     {
+    	this.size = other.size;
         this.cells = other.getBoard();
         this.parent = other;
         successorStates = new HashMap<Point,HitoriGame>();
+        for(int row = 0; row < size; row++)
+        {
+            for(int col = 0; col < size; col++)
+            {
+                this.cells[row][col] = other.cells[row][col];
+            }
+        }
     }
     public void AddSuccessorState(Point point, HitoriGame successor)
     {
@@ -56,22 +64,6 @@ public class HitoriGame {
     public void markCellMustBeWhite(int row, int col, boolean mustBeWhite)
     {
         cells[row][col].setWhite(mustBeWhite);
-    }
-    public List<Point> couldBeBlack() {
-    	List<Point> blacks = new ArrayList<Point>();
-    	
-    	for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size-1; col++)
-            {
-            	if(!cells[row][col].mustBeWhite()) {
-            		Point point = new Point(row, col);
-            		blacks.add(point);
-            	}
-            	
-            }
-    	}
-    	
-    	return blacks;
     }
 
     public void print()
@@ -169,6 +161,29 @@ public class HitoriGame {
         return retSet;
     }
 
+    private boolean isDuplicate(HitoriCell c)
+    {
+        for (HitoriCell[] row : cells) {
+            for (HitoriCell other : row) {
+                if(!other.isBlack() && c.getNumber() == other.getNumber() && (c.getX() == other.getX() ^ c.getY() == other.getY())) return true;
+            }
+            
+        }
+
+        return false;
+    }
+
+    public Set<HitoriCell> getPossibleBlackCells()
+    {
+        Set<HitoriCell> retSet = new HashSet<HitoriCell>();
+        Set<HitoriCell> nonBlacks = getNonBlackSquares();
+        for (HitoriCell cell : nonBlacks) {
+            if(cell.mustBeWhite()) continue;
+            if(isDuplicate(cell)) retSet.add(cell);
+        }
+        return retSet;
+    }
+
     private Set<HitoriCell> getReachableCells(HitoriCell c)
     {
         Set<HitoriCell> reachables = new HashSet<HitoriCell>();
@@ -201,12 +216,11 @@ public class HitoriGame {
         Set<HitoriCell> reachables = getReachableCells(nonBlacks.iterator().next());
         resetVisitedCells();
         return nonBlacks.equals(reachables);
-        //Check if all white spaces are connected to all other white spaces
-        // return true;
     }
 
     public Boolean isValidSolution()
     {
+        //This can be consolidated into one line, but we have it like this for debugging purposes
         if(checkRows() && checkCols())
         {
             System.out.println("Rows and cols ok");
