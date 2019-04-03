@@ -15,6 +15,8 @@ public class HitoriGame {
 
     /* All it really needs is a NxN array of numbers ranging from 1..N and then some way to validate the solution
        No gameplay logic! That goes into HitoriPlayer */
+    
+    //Keep track of the cells, the size of the game and possible successor states.
     private HitoriCell[][] cells;
     private int size;
     private Map<HitoriCell, HitoriGame> successorStates;
@@ -25,6 +27,8 @@ public class HitoriGame {
         this.cells = cells;
         successorStates = new HashMap<HitoriCell,HitoriGame>();
     }
+
+    //Copy constructor
     public HitoriGame(HitoriGame other)
     {
     	this.size = other.size;
@@ -38,10 +42,12 @@ public class HitoriGame {
             }
         }
     }
+
     public void AddSuccessorState(HitoriCell point, HitoriGame successor)
     {
         successorStates.put(point, successor);
     }
+
     public Map<HitoriCell, HitoriGame> GetSuccessorStates()
     {
         return successorStates;
@@ -50,6 +56,7 @@ public class HitoriGame {
     public HitoriCell[][] getBoard() {
     	return cells;
     }
+
     public void markCellBlack(int row, int col, boolean black)
     {
         cells[row][col].setBlack(black);
@@ -76,6 +83,7 @@ public class HitoriGame {
         }
     }
 
+    //Check each row for duplicate numbers
     private Boolean checkRows()
     {
         int[] numCounts = new int[size];
@@ -96,6 +104,7 @@ public class HitoriGame {
         return true;
     }
 
+    //Check each column for duplicate numbers
     private Boolean checkCols()
     {
         int[] numCounts = new int[size];
@@ -119,6 +128,7 @@ public class HitoriGame {
         return true;
     }
 
+    //Check if black squares are touching vertically or horizontally (diag OK)
     private Boolean checkBlackSquares()
     {
         boolean wasPrevBlack = false;
@@ -147,6 +157,7 @@ public class HitoriGame {
         return true;
     }
 
+    //Gets cells that haven't been coloured.
     private Set<HitoriCell> getNonBlackSquares()
     {
         Set<HitoriCell> retSet = new HashSet<HitoriCell>();
@@ -158,10 +169,12 @@ public class HitoriGame {
         return retSet;
     }
 
+    //Checks if the given cell has a duplicate number its' row or column
     private boolean isDuplicate(HitoriCell c)
     {
         for (HitoriCell[] row : cells) {
             for (HitoriCell other : row) {
+                //Make sure the number is the same, and that the row XOR column is the same (XOR, because if they are both the same, then we have just found the same cell)
                 if(!other.isBlack() && c.getNumber() == other.getNumber() && (c.getX() == other.getX() ^ c.getY() == other.getY())) return true;
             }
             
@@ -169,7 +182,7 @@ public class HitoriGame {
 
         return false;
     }
-
+    //Returns a set of cells that have not been coloured black and have not been marked as mustBeWhite
     public Set<HitoriCell> getPossibleBlackCells()
     {
         Set<HitoriCell> retSet = new HashSet<HitoriCell>();
@@ -181,6 +194,7 @@ public class HitoriGame {
         return retSet;
     }
 
+    //A recursive function to get all reachable cells of the given cell
     private Set<HitoriCell> getReachableCells(HitoriCell c)
     {
         Set<HitoriCell> reachables = new HashSet<HitoriCell>();
@@ -194,10 +208,10 @@ public class HitoriGame {
         if(y != 0) reachables.addAll(getReachableCells(cells[x][y-1]));
         if(y != size - 1) reachables.addAll(getReachableCells(cells[x][y+1]));
 
-        // reachables.addAll(getReachableCells(c));
         return reachables;
     }
 
+    //Remember to reset the visited state of all cells once they've been checked for connectivity
     private void resetVisitedCells()
     {
         for (HitoriCell[] rows : cells) {
@@ -207,6 +221,7 @@ public class HitoriGame {
         }
     }
 
+    //Checks if the white space is continious (all white cells are connected to all other white cells)
     private Boolean checkValidConnections()
     {
         Set<HitoriCell> nonBlacks = getNonBlackSquares();
@@ -215,6 +230,7 @@ public class HitoriGame {
         return nonBlacks.equals(reachables);
     }
 
+    //String representation of the state
     public String str()
     {
         String derp = "";
@@ -245,17 +261,22 @@ public class HitoriGame {
          return true;
     }
 
+    //Checks if the puzzle has been solved
     public Boolean isValidSolution()
     {
         //This can be consolidated into one line, but we have it like this for debugging purposes
+
+        //Check for duplicate numbers
         if(checkRows() && checkCols())
         {
             // System.out.println("Rows and cols ok");
+            //Check for illegal black squares
             if(!checkBlackSquares()) 
             {
                 // System.out.println(("Adjacent black squares"));
                 return false;
             }
+            //Check for continous white space
             if(!checkValidConnections()) 
             {
                 // System.out.println("Unreachable white squares");
@@ -267,6 +288,7 @@ public class HitoriGame {
             // System.out.println("Duplicate numbers");
             return false;
         }
+        //All good
         return true;
     }
 }

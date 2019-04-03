@@ -244,23 +244,27 @@ public class HitoriSolver {
             if (frontier.isEmpty()) break;
             //Grab the next node
             node = frontier.pop();
+            //Create some children
             FillSuccessors(node);
-            
+
             //if making the point black causes something illegal go back one state
             
+            //Once we found a solution, we're done
             if (node.isValidSolution())
             {
+                //Print some fun statistics
                 System.out.println("Max frontier: " + maxFrontier);
                 System.out.println("Expanded states: " + expandedStates);
                 return node;
             }
-            //Check for repeated states so that the frontier doesn't grow insanely big
+            //Check for repeated states so that the frontier doesn't grow big
             String stateString = node.str();
             if(!seenStates.contains(stateString))
             {
                 seenStates.add(stateString);
                 frontier.addAll(node.GetSuccessorStates().values());
             }
+
             //Statistics
             expandedStates++;
             if(frontier.size() > maxFrontier) 

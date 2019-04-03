@@ -5,6 +5,7 @@ import java.util.Set;
 
 /**
  * HitoriTests
+ * Some simple test casese to make sure that our code works.
  */
 public class HitoriTests 
 {
@@ -43,7 +44,7 @@ public class HitoriTests
                     {new HitoriCell(5,0,2), new HitoriCell(5,1,5), new HitoriCell(5,2,5), new HitoriCell(5,3,6), new HitoriCell(5,4,1), new HitoriCell(5,5,6), new HitoriCell(5,6,8), new HitoriCell(5,7,2)},
                     {new HitoriCell(6,0,4), new HitoriCell(6,1,3), new HitoriCell(6,2,5), new HitoriCell(6,3,8), new HitoriCell(6,4,8), new HitoriCell(6,5,1), new HitoriCell(6,6,4), new HitoriCell(6,7,6)},
                     {new HitoriCell(7,0,1), new HitoriCell(7,1,6), new HitoriCell(7,2,1), new HitoriCell(7,3,3), new HitoriCell(7,4,5), new HitoriCell(7,5,5), new HitoriCell(7,6,2), new HitoriCell(7,7,1)}};
-            return original3;
+                return original3;
             default: //Same as 0
                 HitoriCell[][] originalDefault = new HitoriCell[][] {
                     {new HitoriCell(0,0,1),   new HitoriCell(0,1,4), new HitoriCell(0,2,2), new HitoriCell(0,3,4), new HitoriCell(0,4,3)},
@@ -97,6 +98,42 @@ public class HitoriTests
                     {new HitoriCell(4,0,1),   new HitoriCell(4,1,3), new HitoriCell(4,2,3), new HitoriCell(4,3,1), new HitoriCell(4,4,2)}};
                 return originalDefault;
         }
+    }
+
+    public static int SMALL_UNSOLVED = 4;
+    public static Set<HitoriCell[][]> getSmallUnsolvedPuzzles()
+    {
+        Set<HitoriCell[][]> tests = new HashSet<HitoriCell[][]>();
+        HitoriCell[][] original1 = new HitoriCell[][] { // #???
+            {new HitoriCell(0,0,1),   new HitoriCell(0,1,4), new HitoriCell(0,2,2), new HitoriCell(0,3,4), new HitoriCell(0,4,3)},
+            {new HitoriCell(1,0,1),   new HitoriCell(1,1,1), new HitoriCell(1,2,3), new HitoriCell(1,3,4), new HitoriCell(1,4,5)},
+            {new HitoriCell(2,0,3),   new HitoriCell(2,1,4), new HitoriCell(2,2,4), new HitoriCell(2,3,5), new HitoriCell(2,4,5)},
+            {new HitoriCell(3,0,4),   new HitoriCell(3,1,5), new HitoriCell(3,2,1), new HitoriCell(3,3,3), new HitoriCell(3,4,2)},
+            {new HitoriCell(4,0,1),   new HitoriCell(4,1,3), new HitoriCell(4,2,3), new HitoriCell(4,3,1), new HitoriCell(4,4,2)}};
+        HitoriCell[][] original2 = new HitoriCell[][] { // #7617
+            {new HitoriCell(0,0,2),   new HitoriCell(0,1,2), new HitoriCell(0,2,1), new HitoriCell(0,3,5), new HitoriCell(0,4,3)},
+            {new HitoriCell(1,0,5),   new HitoriCell(1,1,1), new HitoriCell(1,2,5), new HitoriCell(1,3,2), new HitoriCell(1,4,2)},
+            {new HitoriCell(2,0,2),   new HitoriCell(2,1,5), new HitoriCell(2,2,3), new HitoriCell(2,3,4), new HitoriCell(2,4,1)},
+            {new HitoriCell(3,0,3),   new HitoriCell(3,1,2), new HitoriCell(3,2,1), new HitoriCell(3,3,1), new HitoriCell(3,4,2)},
+            {new HitoriCell(4,0,2),   new HitoriCell(4,1,4), new HitoriCell(4,2,5), new HitoriCell(4,3,3), new HitoriCell(4,4,2)}};
+        HitoriCell[][] original3 = new HitoriCell[][] { // #7694
+            {new HitoriCell(0,0,5),   new HitoriCell(0,1,5), new HitoriCell(0,2,2), new HitoriCell(0,3,3), new HitoriCell(0,4,1)},
+            {new HitoriCell(1,0,4),   new HitoriCell(1,1,2), new HitoriCell(1,2,4), new HitoriCell(1,3,3), new HitoriCell(1,4,5)},
+            {new HitoriCell(2,0,1),   new HitoriCell(2,1,3), new HitoriCell(2,2,5), new HitoriCell(2,3,2), new HitoriCell(2,4,1)},
+            {new HitoriCell(3,0,1),   new HitoriCell(3,1,4), new HitoriCell(3,2,2), new HitoriCell(3,3,1), new HitoriCell(3,4,2)},
+            {new HitoriCell(4,0,5),   new HitoriCell(4,1,1), new HitoriCell(4,2,4), new HitoriCell(4,3,3), new HitoriCell(4,4,3)}};
+        HitoriCell[][] original4 = new HitoriCell[][] { // #13723
+            {new HitoriCell(0,0,5),   new HitoriCell(0,1,5), new HitoriCell(0,2,3), new HitoriCell(0,3,3), new HitoriCell(0,4,2)},
+            {new HitoriCell(1,0,3),   new HitoriCell(1,1,5), new HitoriCell(1,2,2), new HitoriCell(1,3,5), new HitoriCell(1,4,1)},
+            {new HitoriCell(2,0,4),   new HitoriCell(2,1,3), new HitoriCell(2,2,3), new HitoriCell(2,3,1), new HitoriCell(2,4,4)},
+            {new HitoriCell(3,0,3),   new HitoriCell(3,1,1), new HitoriCell(3,2,4), new HitoriCell(3,3,3), new HitoriCell(3,4,5)},
+            {new HitoriCell(4,0,5),   new HitoriCell(4,1,4), new HitoriCell(4,2,2), new HitoriCell(4,3,2), new HitoriCell(4,4,2)}};
+                    
+        tests.add(original1);
+        tests.add(original2);
+        tests.add(original3);
+        tests.add(original4);
+        return tests;
     }
 
     public static Set<HitoriCell[][]> getTestCase(int i)
