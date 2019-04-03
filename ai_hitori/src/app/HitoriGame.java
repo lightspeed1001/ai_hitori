@@ -1,6 +1,5 @@
 package app;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,21 +20,21 @@ public class HitoriGame {
     private HitoriCell[][] cells;
     private int size;
     private HitoriGame parent;
-    private Map<Point, HitoriGame> successorStates;
+    private Map<HitoriCell, HitoriGame> successorStates;
 
     public HitoriGame(int size, HitoriCell[][] cells)
     {
         this.size = size;
         this.cells = cells;
         this.parent = null;
-        successorStates = new HashMap<Point,HitoriGame>();
+        successorStates = new HashMap<HitoriCell,HitoriGame>();
     }
     public HitoriGame(HitoriGame other)
     {
     	this.size = other.size;
         this.cells = other.getBoard();
         this.parent = other;
-        successorStates = new HashMap<Point,HitoriGame>();
+        successorStates = new HashMap<HitoriCell,HitoriGame>();
         for(int row = 0; row < size; row++)
         {
             for(int col = 0; col < size; col++)
@@ -44,11 +43,11 @@ public class HitoriGame {
             }
         }
     }
-    public void AddSuccessorState(Point point, HitoriGame successor)
+    public void AddSuccessorState(HitoriCell point, HitoriGame successor)
     {
         successorStates.put(point, successor);
     }
-    public Map<Point, HitoriGame> GetSuccessorStates()
+    public Map<HitoriCell, HitoriGame> GetSuccessorStates()
     {
         return successorStates;
     }

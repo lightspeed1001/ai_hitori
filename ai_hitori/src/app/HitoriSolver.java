@@ -138,9 +138,9 @@ public class HitoriSolver {
 	public HitoriCell[][] getBoard() {
 		return cells;
 	}
-    public void UpdateMap(HitoriGame state, Point point) {
-    	int row = point.x;
-    	int col = point.y;
+    public void UpdateMap(HitoriGame state, HitoriCell point) {
+    	int row = point.getX();
+    	int col = point.getY();
     	state.markCellBlack(row, col, true);
     	if(row != size-1) {
 			state.markCellMustBeWhite(row+1, col, true);
@@ -151,7 +151,7 @@ public class HitoriSolver {
 		if(col != 0) {
 			state.markCellMustBeWhite(row, col-1, true);
 		}
-		if(col != size-2) {
+		if(col != size-1) {
 			state.markCellMustBeWhite(row, col+1, true);
 		}
     	
@@ -160,8 +160,8 @@ public class HitoriSolver {
     
     public boolean FillSuccessors(HitoriGame node)
     {
-        List<Point> legalMoves = node.couldBeBlack();
-        for (Point cell : legalMoves) 
+        Set<HitoriCell> legalMoves = node.getPossibleBlackCells();
+        for (HitoriCell cell : legalMoves) 
         {
             //Grab a copy of the state we're going to expand
             HitoriGame state = new HitoriGame(node);
@@ -217,12 +217,15 @@ public class HitoriSolver {
                 //Statistics
                 if(frontier.size() > maxFrontier) maxFrontier = frontier.size();
             }
-            return frontier.lastElement();
+            return node;
         }
         return original;
         
     }
-
+	public HitoriGame ret()
+	{
+		return original;
+	}
     /* For the love of god don't make the same mistake as in prog1 where it was all one giant class.
        One for the state (HitoriGame), one for the tree, one for the logic (This one), more if needed 
        Some thoughts:
