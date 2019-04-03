@@ -4,6 +4,7 @@ import java.util.Set;
 
 public class App {
     public static void main(String[] args) throws Exception {
+
         //Testing the state class
         for (int i = 0; i < HitoriTests.NUMBER_OF_TESTS; i++) 
         {
@@ -41,9 +42,6 @@ public class App {
             System.out.println("Time to find solution: " + (end - start) + "ms");
         }
         System.out.println("================================");
-        
-    	HitoriMaker m = new HitoriMaker(7);
-    	m.generateBoard();
 
         /*
         Have some sort of main menu?
